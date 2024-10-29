@@ -109,7 +109,7 @@ class _QRCodeScannerState extends State<QRCodeScanner> {
             const Expanded(
               child: Center(
                 child: Text(
-                  "Scan QR Code",
+                  "Created By Aarsh",
                   style: TextStyle(
                     color: Colors.black54,
                     fontSize: 14,
