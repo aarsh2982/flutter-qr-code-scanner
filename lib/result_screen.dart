@@ -79,9 +79,26 @@ class _ResultScreenState extends State<ResultScreen> {
           embeddedImage: null,
         );
 
-        final picData =
-            await painter.toImageData(2048, format: ui.ImageByteFormat.png);
-        await File(filePath).writeAsBytes(picData!.buffer.asUint8List());
+        // Create an image with a white background
+        final img = await painter.toImage(2048);
+        final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+        final pngBytes = byteData!.buffer.asUint8List();
+
+        // Create an image with white background
+        final recorder = ui.PictureRecorder();
+        final canvas = Canvas(recorder);
+        canvas.drawColor(
+            Colors.white, ui.BlendMode.src); // Draw white background
+        canvas.drawImage(img, Offset.zero, Paint()); // Draw the QR code
+
+        final picture = recorder.endRecording();
+        final imgWithBackground = await picture.toImage(2048, 2048);
+        final byteDataWithBackground =
+            await imgWithBackground.toByteData(format: ui.ImageByteFormat.png);
+        final pngBytesWithBackground =
+            byteDataWithBackground!.buffer.asUint8List();
+
+        await File(filePath).writeAsBytes(pngBytesWithBackground);
 
         if (!mounted) return;
 
