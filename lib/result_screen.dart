@@ -53,6 +53,8 @@ class _ResultScreenState extends State<ResultScreen> {
   Future<void> _saveQrCode() async {
     if (!mounted) return;
 
+    const double padding = 40.0; // Set your desired padding here
+
     try {
       setState(() {
         isLoading = true;
@@ -79,20 +81,30 @@ class _ResultScreenState extends State<ResultScreen> {
           embeddedImage: null,
         );
 
-        // Create an image with a white background
+        // Create the original QR code image
         final img = await painter.toImage(2048);
         final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
         final pngBytes = byteData!.buffer.asUint8List();
 
-        // Create an image with white background
+        // Create an image with white background and padding
         final recorder = ui.PictureRecorder();
         final canvas = Canvas(recorder);
-        canvas.drawColor(
-            Colors.white, ui.BlendMode.src); // Draw white background
-        canvas.drawImage(img, Offset.zero, Paint()); // Draw the QR code
+
+        // Draw the white background
+        canvas.drawColor(Colors.white, ui.BlendMode.src);
+
+        // Calculate the position to draw the QR code with padding
+        final qrCodeSize = img.width.toDouble();
+        final paddedSize =
+            qrCodeSize + (2 * padding); // Total size with padding
+        final offset = Offset(padding, padding); // Position for the QR code
+
+        // Draw the QR code with padding
+        canvas.drawImage(img, offset, Paint());
 
         final picture = recorder.endRecording();
-        final imgWithBackground = await picture.toImage(2048, 2048);
+        final imgWithBackground =
+            await picture.toImage(paddedSize.toInt(), paddedSize.toInt());
         final byteDataWithBackground =
             await imgWithBackground.toByteData(format: ui.ImageByteFormat.png);
         final pngBytesWithBackground =
